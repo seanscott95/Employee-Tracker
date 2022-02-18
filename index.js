@@ -25,6 +25,7 @@ const qMenu = () => {
             },
         ])
         .then((data) => {
+            const role = data.role;
             if (role === "View All Departments") {
                 return viewAllDepartments();
             } else if (role === "View All Roles") {
