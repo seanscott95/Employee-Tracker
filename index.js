@@ -21,7 +21,7 @@ const qMenu = () => {
                 name: "menu",
                 message: "Click",
                 choices: ["View All Departments", "View All Roles", "View All Employees",
-                "Add a Department", "Add a Role", "Add an Employee", "Update an Employee Role"]
+                "Add a Department", "Add a Role", "Add an Employee", "Update an Employee Role", "[Quit]"]
             },
         ])
         .then((data) => {
@@ -40,6 +40,20 @@ const qMenu = () => {
                 return addAnEmployee();
             } else if (role === "Update an Employee Role") {
                 return updateEmployeeRole();
+            } else if (role === '[Quit]') {
+                return quitApp();
             }
         });
+};
+
+const viewAllDepartments = () => {
+    const sql = `SELECT * FROM department`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            init();
+        }
+    });
 };
