@@ -57,3 +57,27 @@ const viewAllDepartments = () => {
         }
     });
 };
+
+const viewAllRoles = () => {
+    const sql = `SELECT * FROM role`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            init();
+        }
+    });
+};
+
+const viewAllEmployees = () => {
+    const sql = `SELECT * FROM employee`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            init();
+        }
+    });
+};
