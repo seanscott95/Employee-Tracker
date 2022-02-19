@@ -133,3 +133,63 @@ const addAnEmployee = (first_name, last_name, role_id, manager_id) => {
         }
     });
 };
+
+// Should they all be prepared statements????                                  ????  ???? ????
+const updateEmployeeRole = (changeProperty, newValue, id) => {
+    const sql = `UPDATE employee SET ? = ? WHERE id = ?;`;
+    connection.query(sql, changeProperty, newValue, id, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            console.log(`Employee ${id} updated!`);
+            init();
+        }
+    });
+};
+
+const quitApp = () => {
+    if (err) {
+        console.log(err);
+    } else {
+        return console.log("Goodbye!");
+    }
+};
+
+const departmentQ = () => {
+    return inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "departmentName",
+                message: "What do you want to name your new department?",
+            },
+        ]).then((data) => {
+            const departmentName = data.name;
+            addADepartment(departmentName);
+        });
+};
+
+const addRoleQ = () => {
+    return inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "title",
+                message: "What is the title of the new role?",
+            },
+            {
+                type: "input",
+                name: "salary",
+                message: "What is the salaray of the role?",
+            },
+            {
+                type: "input",
+                name: "department_id",
+                message: "What is the department id?",
+            }
+        ]).then((data) => {
+            const { title, salary, department_id } = data;
+            addARole(title, salary, department_id);
+        });
+};
