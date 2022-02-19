@@ -92,3 +92,44 @@ const viewAllEmployees = () => {
         }
     });
 };
+
+const addADepartment = (newDepartment) => {
+    const sql = `INSERT INTO department (name) VALUES ("${newDepartment}");`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            console.log(`New department ${newDepartment} created!`)
+            init();
+        }
+    });
+};
+
+const addARole = (title, salary, department_id) => {
+    const sql = `INSERT INTO role (title, salary, department_id)
+    VALUES ("${title}", ${salary}, ${department_id});`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            console.log(`New role ${title} created!`);
+            init();
+        }
+    });
+};
+
+const addAnEmployee = (first_name, last_name, role_id, manager_id) => {
+    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id});`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(rows);
+            console.log(`New employee ${first_name} created!`);
+            init();
+        }
+    });
+};
