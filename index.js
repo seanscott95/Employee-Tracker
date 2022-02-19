@@ -193,3 +193,58 @@ const addRoleQ = () => {
             addARole(title, salary, department_id);
         });
 };
+
+const addEmployeeQ = () => {
+    return inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "firstname",
+                message: "What is the first name of the new Employee?",
+            },
+            {
+                type: "input",
+                name: "lastname",
+                message: "What is the last name of the new Employee?",
+            },
+            {
+                type: "input",
+                name: "roleid",
+                message: "What is the role id?",
+            },
+            {
+                type: "input",
+                name: "managerid",
+                message: "What is the managers id?",
+            },
+        ]).then((data) => {
+            const { first_name, last_name, role_id, manager_id } = data;
+            addAnEmployee(first_name, last_name, role_id, manager_id);
+        });
+};
+
+const updateEmployeeQ = () => {
+    return inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "changeproperty",
+                message: "What row/property do you want to change?",
+            },
+            {
+                type: "input",
+                name: "newvalue",
+                message: "What do you want to change the value to?",
+            },
+            {
+                type: "input",
+                name: "employeeid",
+                message: "What is the employee's id that you want to update?",
+            },
+        ]).then((data) => {
+            const { changeProperty, newValue, id } = data;
+            updateEmployeeRole(changeProperty, newValue, id);
+        });
+};
+
+init();
