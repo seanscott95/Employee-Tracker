@@ -1,9 +1,9 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-require("dotenv").configure();
+require("dotenv").config();
 const cTable = require("console.table");
 
-const connection = await mysql.createConnection(
+const connection = mysql.createConnection(
     {
         host: 'localhost',
         user: process.env.USER_DB,
@@ -13,19 +13,19 @@ const connection = await mysql.createConnection(
     console.log(`Connected to the company_db database.`)
 );
 
-const qMenu = () => {
+const init = () => {
     return inquirer
         .prompt([
             {
                 type: "list",
                 name: "menu",
-                message: "Click",
+                message: "Choose an option!",
                 choices: ["View All Departments", "View All Roles", "View All Employees",
                 "Add a Department", "Add a Role", "Add an Employee", "Update an Employee Role", "[Quit]"]
             },
         ])
         .then((data) => {
-            const role = data.role;
+            const role = data.menu;
             if (role === "View All Departments") {
                 return viewAllDepartments();
             } else if (role === "View All Roles") {
@@ -33,13 +33,13 @@ const qMenu = () => {
             } else if (role === "View All Employees") {
                 return viewAllEmployees();
             } else if (role === "Add a Department") {
-                return addADepartment(); 
+                return departmentQ(); 
             } else if (role === "Add a Role") {
-                return addARole();
+                return addRoleQ();
             } else if (role === "Add an Employee") {
-                return addAnEmployee();
+                return addEmployeeQ();
             } else if (role === "Update an Employee Role") {
-                return updateEmployeeRole();
+                return updateEmployeeQ();
             } else if (role === '[Quit]') {
                 return quitApp();
             }
@@ -47,7 +47,9 @@ const qMenu = () => {
 };
 
 const viewAllDepartments = () => {
-    const sql = `SELECT * FROM department`;
+    const sql = `SELECT department.id,
+    department.name AS department
+    FROM department;`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
@@ -59,7 +61,7 @@ const viewAllDepartments = () => {
 };
 
 const viewAllRoles = () => {
-    const sql = `SELECT * FROM role`;
+    const sql = `SELECT * FROM role;`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
@@ -71,7 +73,16 @@ const viewAllRoles = () => {
 };
 
 const viewAllEmployees = () => {
-    const sql = `SELECT * FROM employee`;
+    const sql = `SELECT employee.id, 
+    CONCAT (employee.first_name, " ", employee.last_name) AS name,
+    role.title, 
+    department.name AS department,
+    role.salary, 
+    CONCAT (manager.first_name, " ", manager.last_name) AS manager
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
