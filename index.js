@@ -10,7 +10,7 @@ const connection = mysql.createConnection(
         password: process.env.PASSWORD_DB,
         database: process.env.NAME_DB
     },
-    console.log(`Connected to the company_db database.`);
+    console.log(`Connected to the company_db database.`)
 );
 
 const init = () => {
@@ -345,8 +345,8 @@ const viewDepartmentUtilBudget = () => {
 };
 
 const deleteDepartment = () => {
-    const deparmentSql = `SELECT * FROM department`; 
-    connection.promise().query(departmentSql, (err, data) => {             //   ?? .promise??
+    const departmentSql = `SELECT * FROM department`; 
+    connection.query(departmentSql, (err, data) => {             //   ?? .promise??
         if (err) throw err; 
         const department = data.map(({ name, id }) => ({ name: name, value: id }));
         inquirer.prompt([
@@ -357,9 +357,9 @@ const deleteDepartment = () => {
                 choices: department
             }
       ]).then(data => {
-            const department = data.deparment;
+            const department = data.department;
             const sql = `DELETE FROM department WHERE id = ?`;
-            connection.query(sql, deparment, (err, result) => {
+            connection.query(sql, department, (err, result) => {
                 if (err) throw err;
                 console.log("Successfully deleted!");
                 viewAllDepartments();
@@ -370,7 +370,7 @@ const deleteDepartment = () => {
 
 const deleteRole = () => { 
     const roleSql = `SELECT * FROM role`; 
-    connection.promise().query(roleSql, (err, data) => {           //   ?? .promise??
+    connection.query(roleSql, (err, data) => {           //   ?? .promise??
         if (err) throw err; 
         const role = data.map(({ title, id }) => ({ name: title, value: id }));
         inquirer.prompt([
@@ -394,7 +394,7 @@ const deleteRole = () => {
 
 const deleteEmployee = () => {
     const employeeSql = `SELECT * FROM employee`;
-    connection.promise().query(employeeSql, (err, data) => {     //   ?? .promise??
+    connection.query(employeeSql, (err, data) => {     //   ?? .promise??
         if (err) throw err; 
         const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
         inquirer.prompt([
