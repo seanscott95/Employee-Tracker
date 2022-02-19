@@ -95,15 +95,15 @@ const viewAllEmployees = () => {
     });
 };
 
+// Should they be prepared statements????                                  ????  ???? ????
 const addADepartment = (newDepartment) => {
     const sql = `INSERT INTO department (name) VALUES ("${newDepartment}");`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
         } else {
-            console.table(rows);
             console.log(`New department ${newDepartment} created!`)
-            init();
+            viewAllDepartments();
         }
     });
 };
@@ -115,9 +115,8 @@ const addARole = (title, salary, department_id) => {
         if (err) {
             console.log(err);
         } else {
-            console.table(rows);
             console.log(`New role ${title} created!`);
-            init();
+            viewAllRoles();
         }
     });
 };
@@ -129,23 +128,21 @@ const addAnEmployee = (first_name, last_name, role_id, manager_id) => {
         if (err) {
             console.log(err);
         } else {
-            console.table(rows);
             console.log(`New employee ${first_name} created!`);
-            init();
+            viewAllEmployees();
         }
     });
 };
 
-// Should they all be prepared statements????                                  ????  ???? ????
 const updateEmployeeRole = (changeProperty, newValue, id) => {
-    const sql = `UPDATE employee SET ? = ? WHERE id = ?;`;
-    connection.query(sql, changeProperty, newValue, id, (err, rows) => {
+    const sql = `UPDATE employee SET ${changeProperty} = "${newValue}" WHERE id = ${id};`;
+    connection.query(sql, (err, rows) => {
+        console.table(rows);
         if (err) {
             console.log(err);
         } else {
-            console.table(rows);
             console.log(`Employee ${id} updated!`);
-            init();
+            viewAllRoles();
         }
     });
 };
@@ -163,11 +160,11 @@ const departmentQ = () => {
         .prompt([
             {
                 type: "input",
-                name: "departmentName",
+                name: "departmentname",
                 message: "What do you want to name your new department?",
             },
         ]).then((data) => {
-            const departmentName = data.name;
+            const departmentName = data.departmentname;
             addADepartment(departmentName);
         });
 };
@@ -220,7 +217,8 @@ const addEmployeeQ = () => {
                 message: "What is the managers id?",
             },
         ]).then((data) => {
-            const { first_name, last_name, role_id, manager_id } = data;
+            const { firstname: first_name, lastname: last_name, roleid: role_id, 
+                managerid: manager_id } = data;
             addAnEmployee(first_name, last_name, role_id, manager_id);
         });
 };
@@ -244,7 +242,13 @@ const updateEmployeeQ = () => {
                 message: "What is the employee's id that you want to update?",
             },
         ]).then((data) => {
-            const { changeProperty, newValue, id } = data;
+            // const { changeProperty1, newValue1, id1 } = data;
+            // const changeProperty = data.changeproperty;
+            // const value = data.newvalue;
+            // const id = data.employeeid;
+            // console.log(changeProperty, newValue, id);
+            // console.log(changeProperty1, newValue1, id1);
+            const { changeproperty: changeProperty, newvalue: newValue, employeeid: id } = data;
             updateEmployeeRole(changeProperty, newValue, id);
         });
 };
