@@ -47,8 +47,8 @@ const init = () => {
 };
 
 const viewAllDepartments = () => {
-    const sql = `SELECT department.id,
-    department.name AS department
+    const sql = `SELECT department.id AS ID,
+    department.name AS Department
     FROM department;`;
     connection.query(sql, (err, rows) => {
         if (err) {
@@ -61,7 +61,9 @@ const viewAllDepartments = () => {
 };
 
 const viewAllRoles = () => {
-    const sql = `SELECT * FROM role;`;
+    const sql = `SELECT role.id AS ID,
+    role.title AS Title
+    FROM role;`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
@@ -73,16 +75,16 @@ const viewAllRoles = () => {
 };
 
 const viewAllEmployees = () => {
-    const sql = `SELECT employee.id, 
-    CONCAT (employee.first_name, " ", employee.last_name) AS name,
-    role.title, 
-    department.name AS department,
-    role.salary, 
-    CONCAT (manager.first_name, " ", manager.last_name) AS manager
+    const sql = `SELECT employee.id AS ID, 
+    CONCAT (employee.first_name, " ", employee.last_name) AS Name,
+    role.title AS Title, 
+    department.name AS Department,
+    role.salary AS Salary, 
+    CONCAT (manager.first_name, " ", manager.last_name) AS Manager
     FROM employee
     LEFT JOIN role ON employee.role_id = role.id
     LEFT JOIN department ON role.department_id = department.id
-    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+    LEFT JOIN employee manager ON employee.manager_id = manager.id;`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
