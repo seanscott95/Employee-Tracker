@@ -66,9 +66,9 @@ const viewAllDepartments = () => {
     const sql = `SELECT department.id AS ID,
     department.name AS Department
     FROM department;`;
-    connection.query(sql, (err, rows) => {
+    connection.query(sql, (err, data) => {
         if (err) throw err;
-        console.table(rows);
+        console.table(data);
         init();
     });
 };
@@ -78,9 +78,9 @@ const viewAllRoles = () => {
     const sql = `SELECT role.id AS ID,
     role.title AS Title
     FROM role;`;
-    connection.query(sql, (err, rows) => {
+    connection.query(sql, (err, data) => {
         if (err) throw err;
-        console.table(rows);
+        console.table(data);
         init();
     });
 };
@@ -97,9 +97,9 @@ const viewAllEmployees = () => {
     LEFT JOIN role ON employee.role_id = role.id
     LEFT JOIN department ON role.department_id = department.id
     LEFT JOIN employee manager ON employee.manager_id = manager.id;`;
-    connection.query(sql, (err, rows) => {
+    connection.query(sql, (err, data) => {
         if (err) throw err;
-        console.table(rows);
+        console.table(data);
         init();
     });
 };
@@ -124,7 +124,7 @@ const addADepartment = () => {
         const departmentName = data.name;
         const sql = `INSERT INTO department (name) VALUES (?);`;
         // const
-        connection.query(sql, departmentName, (err, rows) => {
+        connection.query(sql, departmentName, (err, data) => {
             if (err) throw err;
             console.log(`New department created!`);
             viewAllDepartments();
@@ -357,7 +357,7 @@ const updateEmployeeManagers = () => {
                     params[1] = employee 
 
                     const sql = `UPDATE employee SET manager_id = ? WHERE id = ?`;
-                    connection.query(sql, params, (err, result) => {
+                    connection.query(sql, params, (err, data) => {
                         if (err) throw err;
                         console.log("Employee has been updated!");
                         viewAllEmployees();
@@ -368,15 +368,45 @@ const updateEmployeeManagers = () => {
     });
 };
 
+//
 const viewEmployeeByManager = () => {
-    const sql = `SELECT CONCAT(first_name, " ", last_name) AS Name 
-    FROM employee 
-    GROUP BY manager_id;`;
-    connection.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.table(rows);     // ??
-        init();
-    });
+    const managerSql = `SELECT e.manager_id, CONCAT(m.first_name, ' ', m.last_name) AS manager
+    FROM employee e LEFT JOIN role r
+	ON e.role_id = r.id
+  	LEFT JOIN department d
+  	ON d.id = r.department_id
+  	LEFT JOIN employee m
+	ON m.id = e.manager_id GROUP BY e.manager_id`;
+
+	connection.query(managerSql, (err, data) => {                  //   ?? .promise??
+		if (err) throw err;
+		const managers = data;
+		inquirer.prompt([
+            {
+                type: "list",
+                name: "managers",
+                choices: managers:
+            }
+        ]).then((data) => {
+            const params = [data.managers]
+            const sql  = `SELECT e.id, e.first_name, e.last_name, r.title, CONCAT(m.first_name, ' ', m.last_name) AS manager
+			FROM employee e
+			JOIN role r
+			ON e.role_id = r.id
+			JOIN department d
+			ON d.id = r.department_id
+			LEFT JOIN employee m
+			ON m.id = e.manager_id
+			WHERE m.id = ?`;
+            
+            connection.query(sql, params, (err, data) => {
+                if (err) throw err;
+                console.log("Employee has been updated!");
+                console.table(data);
+                init();
+            });
+		});
+	});
 };
 
 //
@@ -386,9 +416,9 @@ const viewEmployeeByDepartment = () => {
     FROM employee
     LEFT JOIN role ON employee.role_id = role.id 
     LEFT JOIN department ON role.department_id = department.id;`;
-    connection.query(sql, (err, rows) => {       // promise ct w???
+    connection.query(sql, (err, data) => {       // promise ct w???
         if (err) throw err;
-        console.table(rows);        // ??
+        console.table(data);        // ??
         init();
     });
 };
@@ -400,9 +430,9 @@ const viewDepartmentUtilBudget = () => {
     SUM(salary) AS Budget
     FROM role
     JOIN department ON role.department_id = department.id GROUP BY department_id`;
-    connection.query(sql, (err, rows) => {
+    connection.query(sql, (err, data) => {
         if (err) throw err;
-        console.table(rows);         // ??
+        console.table(data);         // ??
         init();
     });
 };
@@ -423,7 +453,7 @@ const deleteDepartment = () => {
       ]).then(data => {
             const department = data.department;
             const sql = `DELETE FROM department WHERE id = ?`;
-            connection.query(sql, department, (err, result) => {
+            connection.query(sql, department, (err, data) => {
                 if (err) throw err;
                 console.log("Successfully deleted!");
                 viewAllDepartments();
@@ -448,7 +478,7 @@ const deleteRole = () => {
         ]).then(data => {
             const role = data.role;
             const sql = `DELETE FROM role WHERE id = ?`;
-            connection.query(sql, role, (err, result) => {
+            connection.query(sql, role, (err, data) => {
                 if (err) throw err;
                 console.log("Successfully deleted!"); 
                 viewAllRoles();
@@ -473,7 +503,7 @@ const deleteEmployee = () => {
         ]).then(data => {
             const employee = data.name;
             const sql = `DELETE FROM employee WHERE id = ?`;
-            connection.query(sql, employee, (err, result) => {
+            connection.query(sql, employee, (err, data) => {
                 if (err) throw err;
                 console.log("Successfully Deleted!");
                 viewAllEmployees();
