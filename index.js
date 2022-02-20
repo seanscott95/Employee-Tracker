@@ -111,6 +111,14 @@ const addADepartment = () => {
             type: "input",
             name: "name",
             message: "What do you want to name your new department?",
+            validate: input => {
+                if (input) {
+                    return true;
+                } else {
+                    console.log("Please enter a new department name.");
+                    return false;
+                }
+            }
         }
     ]).then((data) => {
         const departmentName = data.name;
@@ -131,11 +139,27 @@ const addARole = () => {
             type: "input",
             name: "title",
             message: "What is the title of the new role?",
+            validate: input => {
+                if (input) {
+                    return true;
+                } else {
+                    console.log("Please enter a new role title.");
+                    return false;
+                }
+            }
         },
         {
             type: "input",
             name: "salary",
             message: "What is the salaray of the role?",
+            validate:  input => {
+                if (input) {
+                    return true;
+                } else {
+                    console.log("Please enter a salary for the new role.");
+                    return false;
+                }
+            }
         }
     ]).then((data) => {
         const params = [data.title, data.salary, data.departmentid];
@@ -146,7 +170,7 @@ const addARole = () => {
 
             inquirer.prompt([
                 {
-                    type: "input",
+                    type: "list",
                     name: "departmentid",
                     message: "What department does the role belong to?",
                     choices: department
@@ -174,11 +198,27 @@ const addAnEmployee = () => {
             type: "input",
             name: "firstname",
             message: "What is the first name of the new Employee?",
+            validate:  input => {
+                if (input) {
+                    return true;
+                } else {
+                    console.log("Please enter the first name of the new Employee.");
+                    return false;
+                }
+            }
         },
         {
             type: "input",
             name: "lastname",
             message: "What is the last name of the new Employee?",
+            validate: input => {
+                if (input) {
+                    return true;
+                } else {
+                    console.log("Please enter the last name of the new Employee.");
+                    return false;
+                }
+            }
         },
     ]).then((data) => {
         const params = [data.firstname, data.lastname];
@@ -188,7 +228,7 @@ const addAnEmployee = () => {
             const roles = data.map(({ title, id }) => ({ name: title, value: id }));
             inquirer.prompt([
                 {
-                    type: "input",
+                    type: "list",
                     name: "roleid",
                     message: "What is the role of the new employee?",
                     choices: roles
@@ -213,6 +253,7 @@ const addAnEmployee = () => {
                             type: "input",
                             name: "managerid",
                             message: "What is the managers id?",
+                            choice: manager
                         }
                     ]).then((data) => {
                     const managerId = data.managerid
@@ -371,13 +412,13 @@ const deleteDepartment = () => {
     const departmentSql = `SELECT * FROM department`; 
     connection.query(departmentSql, (err, data) => {             //   ?? .promise??
         if (err) throw err; 
-        const department = data.map(({ name, id }) => ({ name: name, value: id }));
+        const departments = data.map(({ name, id }) => ({ name: name, value: id }));
         inquirer.prompt([
             {
                 type: 'list', 
                 name: 'department',
                 message: "What department do you want to delete?",
-                choices: department
+                choices: departments
             }
       ]).then(data => {
             const department = data.department;
@@ -396,13 +437,13 @@ const deleteRole = () => {
     const roleSql = `SELECT * FROM role`; 
     connection.query(roleSql, (err, data) => {           //   ?? .promise??
         if (err) throw err; 
-        const role = data.map(({ title, id }) => ({ name: title, value: id }));
+        const roles = data.map(({ title, id }) => ({ name: title, value: id }));
         inquirer.prompt([
             {
                 type: 'list', 
                 name: 'role',
                 message: "What role do you want to delete?",
-                choices: role
+                choices: roles
             }
         ]).then(data => {
             const role = data.role;
