@@ -116,7 +116,7 @@ const addADepartment = () => {
         }
     ]).then((data) => {
         const departmentName = data.name;
-        const sql = `INSERT INTO department (name) VALUES (?)");`;
+        const sql = `INSERT INTO department (name) VALUES (?);`;
         // const
         connection.query(sql, departmentName, (err, rows) => {
             if (err) throw err;
@@ -136,16 +136,71 @@ const addARole = (title, salary, department_id) => {
     });
 };
 
-const addAnEmployee = (first_name, last_name, role_id, manager_id) => {
-    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-    VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id});`;
-    connection.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.log(`New employee ${first_name} created!`);
-        viewAllEmployees();
-        }
+//
+const addAnEmployee = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstname",
+            message: "What is the first name of the new Employee?",
+        },
+        {
+            type: "input",
+            name: "lastname",
+            message: "What is the last name of the new Employee?",
+        },
+        .then((data) => {
+            const params = [data.firstname, data.lastname];
+            const roleSql = `SELECT * FROM role`;
+            connection.query(roleSql, (err, data) => {
+                if (err) throw err;
+                const roles = data.map(({ title, id }) => ({ name: title, value: id }));
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "roleid",
+                        message: "What is the role of the new employee?",
+                        choices: roles
+                    }
+                ]).then((data) => {
+                    const role = data.roleid;
+                    params.push(role);
+
+                    const managerSql = `SELECT e.manager_id, CONCAT(m.first_name, ' ', m.last_name) AS manager 
+                    FROM employee e 
+                    LEFT JOIN role r
+                    ON e.role_id = r.id
+                    LEFT JOIN employee m
+                    ON m.id = e.manager_id GROUP BY e.manager_id`;
+                    //????
+                    connection.query(mangerSql, (err, data) => {
+                        if (err) throw err;
+                        // ????
+                        const manager = data.map(({ manager, manager_id  }) => ({ name: manager, value: manager_id }));
+                        inquirer.prompt([
+                            {
+                                type: "input",
+                                name: "managerid",
+                                message: "What is the managers id?",
+                            }
+                        ]).then((data) => {
+                        const managerId = data.managerid
+                        params.push(managerId);
+
+                        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                        VALUES (? ? ? ?)`;
+                        connection.query(sql, params, (err, rows) => {
+                            if (err) throw err;
+                            console.log(`New employee created!`);
+                            viewAllEmployees();
+                        });
+                    });
+                });
+            });
+        });
     });
 };
+
 
 //
 const updateAnEmployee = () => { 
@@ -184,7 +239,7 @@ const updateAnEmployee = () => {
                     params[1] = employee
 
                     const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
-                    connection.query(sql, params, (err, result) => {
+                    connection.query(sql, params, (err, data) => {
                         if (err) throw err;
                         console.log("Employee has been updated!");
                         viewAllEmployees();
@@ -221,35 +276,6 @@ const addRoleQ = () => {
         });
 };
 
-const addEmployeeQ = () => {
-    return inquirer
-        .prompt([
-            {
-                type: "input",
-                name: "firstname",
-                message: "What is the first name of the new Employee?",
-            },
-            {
-                type: "input",
-                name: "lastname",
-                message: "What is the last name of the new Employee?",
-            },
-            {
-                type: "input",
-                name: "roleid",
-                message: "What is the role id?",
-            },
-            {
-                type: "input",
-                name: "managerid",
-                message: "What is the managers id?",
-            },
-        ]).then((data) => {
-            const { firstname: first_name, lastname: last_name, roleid: role_id,
-                managerid: manager_id } = data;
-            addAnEmployee(first_name, last_name, role_id, manager_id);
-        });
-};
 
 //
 const updateEmployeeManagers = () => {
