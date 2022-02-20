@@ -153,11 +153,16 @@ const addARole = () => {
             name: "salary",
             message: "What is the salaray of the role?",
             validate:  input => {
-                if (isNaN(input)) {
-                    console.log("Please enter a number for the salary.");
-                    return false;
+                if ((input)) {
+                    if (isNaN(input)) {
+                        console.log("Please enter a number for the salary")
+                        return false
+                    } else {
+                        return true;
+                    }
                 } else {
-                    return true;
+                    console.log("Please enter a salary.");
+                    return false;
                 }
             }
         }
