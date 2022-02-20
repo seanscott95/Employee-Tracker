@@ -63,34 +63,31 @@ const init = () => {
         });
 };
 
+//
 const viewAllDepartments = () => {
     const sql = `SELECT department.id AS ID,
     department.name AS Department
     FROM department;`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.table(rows);
-            init();
-        }
+        if (err) throw err;
+        console.table(rows);
+        init();
     });
 };
 
+//
 const viewAllRoles = () => {
     const sql = `SELECT role.id AS ID,
     role.title AS Title
     FROM role;`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.table(rows);
-            init();
-        }
+        if (err) throw err;
+        console.table(rows);
+        init();
     });
 };
 
+//
 const viewAllEmployees = () => {
     const sql = `SELECT employee.id AS ID, 
     CONCAT (employee.first_name, " ", employee.last_name) AS Name,
@@ -103,25 +100,29 @@ const viewAllEmployees = () => {
     LEFT JOIN department ON role.department_id = department.id
     LEFT JOIN employee manager ON employee.manager_id = manager.id;`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.table(rows);
-            init();
-        }
+        if (err) throw err;
+        console.table(rows);
+        init();
     });
 };
 
-// Should they be prepared statements????                                  ????  ???? ????
-const addADepartment = (newDepartment) => {
-    const sql = `INSERT INTO department (name) VALUES ("${newDepartment}");`;
-    connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(`New department ${newDepartment} created!`)
-            viewAllDepartments();
+//
+const addADepartment = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What do you want to name your new department?",
         }
+    ]).then((data) => {
+        const departmentName = data.name;
+        const sql = `INSERT INTO department (name) VALUES (?)");`;
+        // const
+        connection.query(sql, departmentName, (err, rows) => {
+            if (err) throw err;
+            console.log(`New department created!`)
+            viewAllDepartments();
+        })
     });
 };
 
@@ -129,12 +130,9 @@ const addARole = (title, salary, department_id) => {
     const sql = `INSERT INTO role (title, salary, department_id)
     VALUES ("${title}", ${salary}, ${department_id});`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(`New role ${title} created!`);
-            viewAllRoles();
-        }
+        if (err) throw err;
+        console.log(`New role ${title} created!`);
+        viewAllRoles();
     });
 };
 
@@ -142,15 +140,14 @@ const addAnEmployee = (first_name, last_name, role_id, manager_id) => {
     const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
     VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id});`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(`New employee ${first_name} created!`);
-            viewAllEmployees();
+        if (err) throw err;
+        console.log(`New employee ${first_name} created!`);
+        viewAllEmployees();
         }
     });
 };
 
+//
 const updateAnEmployee = () => { 
     const employeesSql = `SELECT * FROM employee`; 
     connection.query(employeesSql, (err, data) => {           //   ?? .promise??
@@ -198,19 +195,7 @@ const updateAnEmployee = () => {
     });
 };
 
-const departmentQ = () => {
-    return inquirer
-        .prompt([
-            {
-                type: "input",
-                name: "departmentname",
-                message: "What do you want to name your new department?",
-            },
-        ]).then((data) => {
-            const departmentName = data.departmentname;
-            addADepartment(departmentName);
-        });
-};
+
 
 const addRoleQ = () => {
     return inquirer
@@ -266,6 +251,7 @@ const addEmployeeQ = () => {
         });
 };
 
+//
 const updateEmployeeManagers = () => {
     const employeeSql = `SELECT * FROM employee`;
     connection.query(employeeSql, (err, data) => {     //   ?? .promise??
@@ -318,15 +304,13 @@ const viewEmployeeByManager = () => {
     FROM employee 
     GROUP BY manager_id;`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.table(rows);     // ??
-            init();
-        }
+        if (err) throw err;
+        console.table(rows);     // ??
+        init();
     });
 };
 
+//
 const viewEmployeeByDepartment = () => {
     const sql = `SELECT CONCAT(first_name, " ", last_name) AS Name,
     department.name AS Department
@@ -334,15 +318,13 @@ const viewEmployeeByDepartment = () => {
     LEFT JOIN role ON employee.role_id = role.id 
     LEFT JOIN department ON role.department_id = department.id;`;
     connection.query(sql, (err, rows) => {       // promise ct w???
-        if (err) {
-            console.log(err);
-        } else {
-            console.table(rows);        // ??
-            init();
-        }
+        if (err) throw err;
+        console.table(rows);        // ??
+        init();
     });
 };
 
+//
 const viewDepartmentUtilBudget = () => {
     const sql = `SELECT department_id AS ID,
     department.name AS Department,
@@ -350,15 +332,13 @@ const viewDepartmentUtilBudget = () => {
     FROM role
     JOIN department ON role.department_id = department.id GROUP BY department_id`;
     connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.table(rows);         // ??
-            init();
-        }
+        if (err) throw err;
+        console.table(rows);         // ??
+        init();
     });
 };
 
+//
 const deleteDepartment = () => {
     const departmentSql = `SELECT * FROM department`; 
     connection.query(departmentSql, (err, data) => {             //   ?? .promise??
@@ -383,6 +363,7 @@ const deleteDepartment = () => {
     });
 };
 
+//
 const deleteRole = () => { 
     const roleSql = `SELECT * FROM role`; 
     connection.query(roleSql, (err, data) => {           //   ?? .promise??
@@ -407,6 +388,7 @@ const deleteRole = () => {
     });
 };
 
+//
 const deleteEmployee = () => {
     const employeeSql = `SELECT * FROM employee`;
     connection.query(employeeSql, (err, data) => {     //   ?? .promise??
