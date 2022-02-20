@@ -58,7 +58,7 @@ const init = () => {
             } else if (role === "Delete Employee") {
                 return deleteEmployee();
             } else if (role === '[Quit]') {
-                return quitApp();
+                return connection.end();
             } 
         });
 };
@@ -161,14 +161,6 @@ const updateEmployeeRole = (changeProperty, newValue, id) => {
             viewAllRoles();
         }
     });
-};
-
-const quitApp = () => {
-    if (err) {
-        console.log(err);
-    } else {
-        return console.log("Goodbye!");
-    }
 };
 
 const departmentQ = () => {
@@ -287,7 +279,7 @@ const updateEmployeeManagerQ = () => {
             {
                 type: "input",
                 name: "employee",
-                message: "What employee do you want to change?"
+                message: "What employee do you want to update?"
             },
             {
                 type: "input",
@@ -297,8 +289,9 @@ const updateEmployeeManagerQ = () => {
         ]).then((data) => {
             const { employee, manager } = data;
             updateEmployeeManagers(employee, manager);
-        })
-}
+        }
+    );
+};
 
 const viewEmployeeByManager = () => {
     const sql = `SELECT CONCAT(first_name, " ", last_name) AS Name FROM employee GROUP BY manager_id;`;
