@@ -42,7 +42,7 @@ const init = () => {
             } else if (role === "Add an Employee") {
                 return addEmployeeQ();
             } else if (role === "Update an Employee Role") {
-                return updateEmployeeQ();
+                return updateAnEmployee();
             } else if (role === "Update Employee Managers") {
                 return updateEmployeeManagers();
             } else if (role === "View Employees By Manager") {
@@ -151,15 +151,50 @@ const addAnEmployee = (first_name, last_name, role_id, manager_id) => {
     });
 };
 
-const updateEmployeeRole = (changeProperty, newValue, id) => {
-    const sql = `UPDATE employee SET ${changeProperty} = "${newValue}" WHERE id = ${id};`;
-    connection.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(`Employee ${id} updated!`);
-            viewAllRoles();
-        }
+const updateAnEmployee = () => { 
+    const employeesSql = `SELECT * FROM employee`; 
+    connection.query(employeesSql, (err, data) => {           //   ?? .promise??
+        if (err) throw err; 
+        const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
+        inquirer.prompt([
+            {
+                type: 'list', 
+                name: 'name',
+                message: "What employee do you want to update?",
+                choices: employees
+            }
+        ]).then((data) => {
+            const employee = data.name;
+            const params [];
+            params.push(employee);
+            const roleSql = `SELECT * FROM role`;
+            connection.query(roleSql, (err, data) => {                  //   ?? .promise??
+                if (err) throw err;
+                const role = data.map(({ title, id }) => ({ name: title, value: id }));
+                inquirer.prompt([
+                    {
+                        type: 'list', 
+                        name: 'role',
+                        message: "What is the new role of the employee?",
+                        choices: role
+                    }
+                ]).then((data) => {
+                    const newRole = data.role;
+                    params.push(newRole);
+
+                    let employee = params[0]
+                    params[0] = role
+                    params[1] = employee
+
+                    const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+                    connection.query(sql, params, (err, result) => {
+                        if (err) throw err;
+                        console.log("Employee has been updated!");
+                        viewAllEmployees();
+                    })
+                });
+            });
+        });
     });
 };
 
@@ -231,36 +266,6 @@ const addEmployeeQ = () => {
         });
 };
 
-const updateEmployeeQ = () => {
-    return inquirer
-        .prompt([
-            {
-                type: "input",
-                name: "changeproperty",
-                message: "What row/property do you want to change?",
-            },
-            {
-                type: "input",
-                name: "newvalue",
-                message: "What do you want to change the value to?",
-            },
-            {
-                type: "input",
-                name: "employeeid",
-                message: "What is the employee's id that you want to update?",
-            },
-        ]).then((data) => {
-            // const { changeProperty1, newValue1, id1 } = data;
-            // const changeProperty = data.changeproperty;
-            // const value = data.newvalue;
-            // const id = data.employeeid;
-            // console.log(changeProperty, newValue, id);
-            // console.log(changeProperty1, newValue1, id1);
-            const { changeproperty: changeProperty, newvalue: newValue, employeeid: id } = data;
-            updateEmployeeRole(changeProperty, newValue, id);
-        });
-};
-
 const updateEmployeeManagers = () => {
     const employeeSql = `SELECT * FROM employee`;
     connection.query(employeeSql, (err, data) => {     //   ?? .promise??
@@ -309,7 +314,9 @@ const updateEmployeeManagers = () => {
 };
 
 const viewEmployeeByManager = () => {
-    const sql = `SELECT CONCAT(first_name, " ", last_name) AS Name FROM employee GROUP BY manager_id;`;
+    const sql = `SELECT CONCAT(first_name, " ", last_name) AS Name 
+    FROM employee 
+    GROUP BY manager_id;`;
     connection.query(sql, (err, rows) => {
         if (err) {
             console.log(err);
