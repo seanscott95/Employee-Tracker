@@ -157,9 +157,8 @@ const addARole = () => {
                     if (isNaN(input)) {
                         console.log("Please enter a number for the salary")
                         return false
-                    } else {
-                        return true;
                     }
+                    return true;
                 } else {
                     console.log("Please enter a salary.");
                     return false;
@@ -259,10 +258,10 @@ const addAnEmployee = () => {
                     }));
                     inquirer.prompt([
                         {
-                            type: "input",
+                            type: "list",
                             name: "managerid",
-                            message: "What is the managers id?",
-                            choice: manager
+                            message: "Who is the employee's manager?",
+                            choices: manager
                         }
                     ]).then((data) => {
                         const managerId = data.managerid
@@ -270,7 +269,7 @@ const addAnEmployee = () => {
 
                         const sql = `INSERT INTO employee (first_name, last_name, role_id, 
                         manager_id)
-                        VALUES (? ? ? ?)`;
+                        VALUES (?, ?, ?, ?)`;
                         connection.query(sql, params, (err, rows) => {
                             if (err) throw err;
                             console.log(`New employee created!`);
