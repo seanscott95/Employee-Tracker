@@ -44,3 +44,4 @@
 
 ## Links
 - Link: [GitHub](https://github.com/seanscott95/Employee-Tracker/blob/main/index.js)
+- Link: [Video-Demo](https://drive.google.com/file/d/17lwBlBQHtefEUjlOBoHi-8HGhXXkrOh7/view)
