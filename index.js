@@ -186,7 +186,7 @@ const addARole = () => {
         connection.query(roleSql, (err, data) => {
             if (err) throw err;
             //Uses the data requested as a list of choices using inquirer
-            const department = data.map(({ title, id }) => ({ name: title, value: id }));
+            const department = data.map(({ name, id, }) => ({ name: name, value: id }));
 
             inquirer.prompt([
                 {
