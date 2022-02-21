@@ -30,10 +30,10 @@
 <p> This application was not developed using Test Driven Development.</p>
 
 ## Screenshots
-- []()
-- []()
-- []()
-- []()
+- [Menu-Top](./assets/menu1.png)
+- [Menu-Bottom](./assets/menu2.png)
+- [View](./assets/viewAllEmployees.png)
+- [Add](./assets/addAEmployee.png)
 
 ## Questions 
 <p> To reach me with additional questions please contact me via one of the following methods: </p>
