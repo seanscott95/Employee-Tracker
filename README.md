@@ -43,5 +43,5 @@
 - Link: [LinkedIn](https://www.linkedin.com/in/sean-scott-18ba07225/)
 
 ## Links
-- Link: [GitHub](https://github.com/seanscott95/Employee-Tracker/blob/main/index.js)
+- Link: [GitHub](https://github.com/seanscott95/Employee-Tracker)
 - Link: [Video-Demo](https://drive.google.com/file/d/17lwBlBQHtefEUjlOBoHi-8HGhXXkrOh7/view)
