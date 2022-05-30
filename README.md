@@ -1,7 +1,7 @@
 # Employee-Tracker [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Description 
-<p> This application was created to allow a business owner to be able to view and manage the departments, roles, and employees in their company. This allows the user to organize and plan their business. This application was created with JavaScript using [Node.js](https://nodejs.org/en/) and the modules used include [Inquirer package](https://www.npmjs.com/package/inquirer), [mysql2](https://www.npmjs.com/package/mysql2), [Console table](https://www.npmjs.com/package/console.table) and [Dotenv](https://www.npmjs.com/package/dotenv)<p>
+This application was created to allow a business owner to be able to view and manage the departments, roles, and employees in their company. This allows the user to organize and plan their business. This application was created with JavaScript using [Node.js](https://nodejs.org/en/) and the modules used include [Inquirer package](https://www.npmjs.com/package/inquirer), [mysql2](https://www.npmjs.com/package/mysql2), [Console table](https://www.npmjs.com/package/console.table) and [Dotenv](https://www.npmjs.com/package/dotenv)
     
 ## Table of Contents 
 - [Installation](#Installation)
@@ -32,8 +32,11 @@
 ## Screenshots
 
 ![Menu-Top](./assets/menu1.png)
+
 ![Menu-Bottom](./assets/menu2.png)
+
 ![View](./assets/viewAllEmployees.png)
+
 ![Add](./assets/addANewEmployee.png)
 
 ## Questions 
